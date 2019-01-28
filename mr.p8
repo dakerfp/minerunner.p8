@@ -22,6 +22,7 @@ s_flag=18
 s_mine=4
 v0=0.02
 vacc=0.002
+highest_score=0
 
 sfx_explosion=1
 sfx_click=2
@@ -180,6 +181,8 @@ end
 
 function _init()
 	poke(0x5f2d, 1)
+	cartdata("mine_runner")
+	highest_score=dget(0)
 	init_game_session()
 	_update=update_game_loop
 end
@@ -249,6 +252,7 @@ function update_game_loop()
 end
 
 restart=false
+new_high_score=false
 function update_game_over()
 	mx,my,_,bp=mouse()
 	-- explosion
@@ -256,6 +260,11 @@ function update_game_over()
 		restart=false
  	explosion={x=mx,y=my,
 	 	t=0.001,v=0.025}
+	 if score > highest_score then
+		 highest_score=score
+		 dset(0,score)
+		 new_high_score=true
+		end
 	end
  if explosion.t>0 and explosion.t<1 then -- animating
 		explosion.t+=explosion.v
@@ -263,6 +272,7 @@ function update_game_over()
 	elseif not restart then
 		if (band(bp,1)!=1) return
 		init_game_session() -- nils explosion
+		new_high_score=false
  	explosion={x=mx,y=my,
 	 	t=0.999,v=-0.03}
 		restart=true
@@ -294,6 +304,11 @@ function _draw()
 			print("game over",46,60,9)
 			if e.t>=1 then
 				print("click to restart",34,74,9)
+			end
+			if new_high_score then
+				print("you've got a new high score!",10,86,7)
+			else
+				print("current high score: "..tostr(flr(highest_score)),13,86,9)
 			end
 		end
 	end
