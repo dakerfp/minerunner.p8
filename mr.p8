@@ -27,6 +27,7 @@ sfx_explosion=1
 sfx_click=2
 sfx_restart=3
 sfx_reveal=4
+sfx_speed=5
 
 -- game state
 rows={}
@@ -150,7 +151,7 @@ function reveal(x,y)
 			reveal(x+1,y)
 			reveal(x+1,y+1)
 		end
-		sfx(sfx_reveal)
+		sfx(sfx_reveal,0)
 	end
 	mset(x-1,y-1,rows[y][x].s)
 	return rows[y][x].s
@@ -209,7 +210,7 @@ function update_game_loop()
 	mx,my,mb,mbp=mouse()
 	-- left click: reveal
 	if (band(mbp,1)==1) then
-		sfx(sfx_click)
+		sfx(sfx_click,2)
 		x,y=map_to_grid(mx,my)
 		if reveal(x,y)==s_mine then
 			life-=100
@@ -230,9 +231,11 @@ function update_game_loop()
 	if (band(mb,4)==4) then
 		dy-=0.5
 		score+=0.5*2 -- double score when you speed
+		if (band(mbp,4)==4) sfx(sfx_speed,1)
 	else
 		dy-=vel
 		score+=vel
+		sfx(-1,1)
 	end
 	if dy < -8 then
 		complexity=flr(rnd(3))+1
