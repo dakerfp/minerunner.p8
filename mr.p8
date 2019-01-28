@@ -23,7 +23,7 @@ v0=0.02
 vacc=0.002
 
 rows={}
-explosion={}
+explosion=nil
 vel=v0
 dy=0
 life=100
@@ -74,6 +74,15 @@ function update_row_count(y)
 				rows[y][x].s=v
 				mset(x-1,y-1,v)
 			end
+		end
+	end
+end
+
+function update_all_map()
+	for y=1,#rows do
+		row=rows[y]
+		for x=1,row_width do
+			mset(x-1,y-1,row[x].s)
 		end
 	end
 end
@@ -139,8 +148,7 @@ function reveal(x,y)
 	return rows[y][x].s
 end
 
-function _init()
-	poke(0x5f2d, 1)
+function init_game_session()
 	vel=v0
 	dy=0
 	rows={}
@@ -157,6 +165,12 @@ function _init()
 	for y=1,#rows do
 		update_row_count(y)
 	end
+	update_all_map()
+end
+
+function _init()
+	poke(0x5f2d, 1)
+	init_game_session()
 	_update=update_game_loop
 end
 
@@ -171,7 +185,7 @@ end
 mx,my,mb=0,0,0
 function update_game_loop()
 	-- check for game over
-	if life==0 then
+	if life<=0 then
 		_update=update_game_over
 		return
 	end
@@ -219,15 +233,29 @@ function update_game_loop()
 	life=max(life,0)
 end
 
+restart=false
 function update_game_over()
+	mx,my,_,bp=mouse()
 	-- explosion
 	if explosion==nil then
- 	explosion={t=0,x=mx,y=my}
- else
-		explosion.t+=0.025
-		explosion.t=min(explosion.t,1)
+		restart=false
+ 	explosion={x=mx,y=my,
+	 	t=0.001,v=0.025}
 	end
-	return
+ if explosion.t>0 and explosion.t<1 then -- animating
+		explosion.t+=explosion.v
+		explosion.t=mid(0,explosion.t,1)
+	elseif not restart then
+		if (band(bp,1)!=1) return
+		init_game_session() -- nils explosion
+ 	explosion={x=mx,y=my,
+	 	t=0.999,v=-0.03}
+		restart=true
+	elseif restart then
+		explosion=nil
+		restart=false
+		_update=update_game_loop
+	end
 end
 
 -->8
@@ -235,21 +263,26 @@ end
 function _draw()
 	cls()
 	map(0,0,0,dy,16,#rows)
-	spr(1,mx-2,my)
 	x,y=map_to_grid(mx,my)
 	rectfill(0,0,128,8,3)
 	rectfill(69,1,121,7,2)
 	rectfill(70,2,70+life/2,6,8)
 	
+	-- draw explosion
 	e=explosion
 	if e!=nil then
-		circfill(e.x,e.y,e.t*208,9)
-		circfill(e.x,e.y,e.t*200,8)
+		r=e.t*e.t
+		circfill(e.x,e.y,r*208,9)
+		circfill(e.x,e.y,r*180,8)
 		if e.t>=0.5 then -- almost finish animation
 			print("game over",46,60,9)
+			if e.t>=1 then
+				print("click to restart",34,74,9)
+			end
 		end
 	end
 	print("score: "..tostr(flr(score)),2,2,9)
+	spr(1,mx-2,my) -- mouse
 end
 __gfx__
 00000000010000000000000000000000bbbbbbbb0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
