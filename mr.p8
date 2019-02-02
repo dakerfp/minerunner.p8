@@ -305,27 +305,34 @@ function draw_text(txt,x,y,c)
 end
 
 function _draw()
-	cls()
+	cls(3)
 	if _update==update_intro then
-		map(0,0,0,0,16,16)
-		spr(43,20,20)
-		spr(44,30,20)
 		if show_help then
-			x=16
-			y=60
-			rectfill(0,0,128,128,3)
+			x=8
+			y=8
+			cls(3)
 			txt={
-				"click left mouse button:",
-				"to reveal tile",
-				"click right mouse button:",
-				"to add flag over a tile",
-				"hold middle mouse button:",
-				"to speed up the map"}
+				"-if you reveal bomb you lose",
+				"-every unrevealed blank tile",
+				" left behinds consumes hp",
+				"-flag bombs and speed up",
+				" to win more points",
+				"-click left mouse button:",
+				" to reveal tile",
+				"-click right mouse button:",
+				" to add flag over a tile",
+				"-hold middle mouse button:",
+				" to speed up the map"}
 			draw_text(txt,x,y,9)
 		else
+			map(0,0,0,0,16,16)
+			spr(43,20,20)
+			spr(44,30,20)
 			rectfill(43,69,83,75,7)
 			print("minerunner",44,70,9)
-			draw_text({"press ❎ to start","press 🅾️ for help"},32,97,10)
+			rectfill(29,96,99,102,3)
+			rectfill(29,104,99,110,3)
+			draw_text({"press ❎ to start","press 🅾️ for help"},30,97,9)
 		end
 		return
 	end
