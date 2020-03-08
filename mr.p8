@@ -257,7 +257,7 @@ end
 
 show_help=false
 function update_intro()
-	show_help=btn(🅾️) 
+	show_help=btn(🅾️)
 	if btnp(❎) then
 		init_game_session()
 		_update=update_game_loop
@@ -267,6 +267,7 @@ end
 restart=false
 new_high_score=false
 function update_game_over()
+	show_help=btn(🅾️)
 	mx,my,_,bp=mouse()
 	-- explosion
 	if explosion==nil then
@@ -306,37 +307,43 @@ function draw_text(txt,x,y,c)
 	end
 end
 
+function draw_help()
+	x=8
+	y=8
+	cls(3)
+	txt={
+		"-if you reveal bomb you lose",
+		"-every unrevealed blank tile",
+		" left behinds consumes hp",
+		"-flag bombs and speed up",
+		" to win more points",
+		"-click left mouse button:",
+		" to reveal tile",
+		"-click right mouse button:",
+		" to add flag over a tile",
+		"-hold middle mouse button:",
+		" to speed up the map"}
+	draw_text(txt,x,y,9)
+	print("@dakerfp",95,121,9)
+end
+
 function _draw()
 	cls(3)
+
+	if show_help and (_update==update_intro or _update==update_game_over) then
+		draw_help()
+		return
+	end
+
 	if _update==update_intro then
-		if show_help then
-			x=8
-			y=8
-			cls(3)
-			txt={
-				"-if you reveal bomb you lose",
-				"-every unrevealed blank tile",
-				" left behinds consumes hp",
-				"-flag bombs and speed up",
-				" to win more points",
-				"-click left mouse button:",
-				" to reveal tile",
-				"-click right mouse button:",
-				" to add flag over a tile",
-				"-hold middle mouse button:",
-				" to speed up the map"}
-			draw_text(txt,x,y,9)
-			print("@dakerfp",95,121,9)
-		else
-			map(0,0,0,0,16,16)
-			spr(43,20,20)
-			spr(44,30,20)
-			rectfill(43,69,83,75,7)
-			print("minerunner",44,70,9)
-			rectfill(29,96,99,102,3)
-			rectfill(29,104,99,110,3)
-			draw_text({"press ❎ to start","press 🅾️ for help"},30,97,9)
-		end
+		map(0,0,0,0,16,16)
+		spr(43,20,20)
+		spr(44,30,20)
+		rectfill(43,69,83,75,7)
+		print("minerunner",44,70,9)
+		rectfill(29,96,99,102,3)
+		rectfill(29,104,99,110,3)
+		draw_text({"press ❎ to start","press 🅾️ for help"},30,97,9)
 		return
 	end
 	
