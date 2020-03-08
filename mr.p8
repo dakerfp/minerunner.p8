@@ -2,8 +2,8 @@ pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
 -- minerunner
+-- by dakerfp
 -- version 1.0
--- author dakerfp
 
 lastb=0
 function mouse()
