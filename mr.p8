@@ -274,15 +274,14 @@ function update_game_over()
 	-- explosion
 	if explosion==nil then
 		restart=false
- 	explosion={x=mx,y=my,
-	 	t=0.001,v=0.025}
-	 if score > highest_score then
+ 		explosion={x=mx,y=my,t=0.001,v=0.025}
+	if score > highest_score then
 		 highest_score=score
 		 dset(0,score)
 		 new_high_score=true
 		end
 	end
- if explosion.t>0 and explosion.t<1 then -- animating
+ 	if explosion.t>0 and explosion.t<1 then -- animating
 		explosion.t+=explosion.v
 		explosion.t=mid(0,explosion.t,1)
 	elseif not restart then
