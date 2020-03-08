@@ -163,7 +163,7 @@ function reveal(x,y)
 end
 
 function init_game_session()
-	music(-1, 500)
+	music(5)
 	vel=v0
 	dy=0
 	rows={}
@@ -204,11 +204,10 @@ function update_game_loop()
 	-- check for game over
 	if life<=0 then
 		sfx(sfx_explosion)
+		music(-1,5000)
 		_update=update_game_over
 		return
 	end
-
-	if (score < 2) music(5)
 
 	-- time
 	t+=1/30 -- in secs
